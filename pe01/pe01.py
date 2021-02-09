@@ -108,7 +108,7 @@ print(str(len(cards)) + " cards")
 
 possibleCombos = 0
 
-for i in range(len(cards)):
+for i in range(len(cardNames)):
     possibleCombos = (possibleCombos + 1) * (i + 1)
 
 print(str(possibleCombos) + " combos possible")
@@ -122,15 +122,15 @@ currentCombos = []
 
 for i in range(len(cards)):
     if i == 0:
-        for card in cards:
-            currentCombos.append([card])
+        for cardName in cardNames:
+            currentCombos.append([cardName])
     else:
         for combo in prevCombos:
-            for card in cards:
+            for cardName in cardNames:
                 if len(currentCombos) == 0 or currentCombos[-1] != combo:
                     currentCombos.append(combo.copy())
-                if card not in currentCombos[-1]:
-                    currentCombos[-1].append(card)
+                if cardName not in currentCombos[-1]:
+                    currentCombos[-1].append(cardName)
     prevCombos = []
     for combo in currentCombos:
         if combo not in combos:
@@ -160,22 +160,23 @@ print(str(len(combos)) + " combos found")
 #   <figcaption class="gallery__caption">PE01-ABCD</figcaption>
 # </figure>
 
+combos.sort()
 currentCombo = 0
 
 for combo in combos:
     comboId = ''
-    for card in combo:
-        comboId = comboId + cardNames[cards.index(card)]
+    for cardName in combo:
+        comboId = comboId + cardName
     comboId = issue + '-' + comboId
     if 'svg' in format:
         print('<figure class="gallery__item" id="' + comboId.lower() + '"><svg viewBox="0 0 252 252" width="252" height="252"><use xlink:href="#card-bg"></use>')
     if 'pdf' in format:
         newPage(canvasWidth,canvasHeight)
-    for card in combo:
+    for cardName in combo:
         if 'pdf' in format:
-            card()
+            cards[cardNames.index(cardName)]()
         if 'svg' in format:
-            print('<use xlink:href="#' + cardNames[cards.index(card)].lower() + '"></use>')
+            print('<use xlink:href="#' + cardName.lower() + '"></use>')
     if 'svg' in format:
         print('</svg><figcaption class="gallery__caption">' + comboId + '</figcaption></figure>')
     if 'pdf' in format:
