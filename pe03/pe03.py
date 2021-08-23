@@ -247,20 +247,21 @@ print(str(len(combosFinal)) + ' final combos')
 # Draw the final combinations (needs to be modified to work
 # with the new line combos setup)
 
-# for combo in combos:
-#     newPage(canvasW,canvasH)
-#     strokeWidth(gridUnit / 25)
-#     stroke(.75,.75,.75)
-#     for i in range(gridW + 1):
-#         line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
-#     for i in range(gridH + 1):
-#         line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
-#     stroke(0,0,0)
-#     for lin1 in combo:
-#         point1 = line1[0]
-#         point2 = line1[1]
-#         x1 = point1[0]
-#         y1 = point1[1]
-#         x2 = point2[0]
-#         y2 = point2[1]
-#         line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
+for combo in combosFinal:
+    newPage(canvasW,canvasH)
+    strokeWidth(gridUnit / 25)
+    stroke(.90,.90,.90)
+    for i in range(gridW + 1):
+        line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
+    for i in range(gridH + 1):
+        line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
+    stroke(0,0,0)    
+    for point in range(int(len(combo) / 2)):
+        lineStart = combo[point * 2]
+        lineEnd = combo[(point * 2) + 1]
+        x1 = lineStart[0]
+        y1 = lineStart[1]
+        x2 = lineEnd[0]
+        y2 = lineEnd[1]
+        line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
+saveImage('PE03-draft1.pdf', multipage=True)
