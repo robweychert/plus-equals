@@ -243,25 +243,37 @@ combosFinal.sort()
 print(str(len(combosFinal)) + ' final combos')
 # print(combosFinal)
 
+def drawCombo(drawing):
+    for point in range(int(len(drawing) / 2)):
+        lineStart = drawing[point * 2]
+        lineEnd = drawing[(point * 2) + 1]
+        x1 = lineStart[0]
+        y1 = lineStart[1]
+        x2 = lineEnd[0]
+        y2 = lineEnd[1]
+        line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
+
 # ------------------------------------------------------------
 # Draw the final combinations (needs to be modified to work
 # with the new line combos setup)
 
 for combo in combosFinal:
     newPage(canvasW,canvasH)
-    strokeWidth(gridUnit / 25)
-    stroke(.90,.90,.90)
-    for i in range(gridW + 1):
-        line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
-    for i in range(gridH + 1):
-        line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
-    stroke(0,0,0)    
-    for point in range(int(len(combo) / 2)):
-        lineStart = combo[point * 2]
-        lineEnd = combo[(point * 2) + 1]
-        x1 = lineStart[0]
-        y1 = lineStart[1]
-        x2 = lineEnd[0]
-        y2 = lineEnd[1]
-        line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
-saveImage('PE03-draft1.pdf', multipage=True)
+    # strokeWidth(gridUnit / 25)
+    # stroke(.90,.90,.90)
+    # for i in range(gridW + 1):
+    #     line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
+    # for i in range(gridH + 1):
+    #     line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
+    xy = [-canvasW,canvasH,0,canvasH,canvasW,canvasH,-canvasW,0,canvasW,-canvasW,canvasW,0,-canvasW,-canvasW,0,-canvasW,0,0]
+    for i in range(9):
+        with savedState():
+            scale(0.333333333333, center=(canvasW / 2, canvasH / 2))
+            translate(xy[i*2],xy[i*2+1])
+            lineCap('round')
+            stroke(0.75)
+            strokeWidth(gridUnit / 10)
+            if i == 8:
+                stroke(0)
+            drawCombo(combo)
+# saveImage('PE03-draft1.pdf', multipage=True)
