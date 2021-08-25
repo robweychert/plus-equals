@@ -3,13 +3,19 @@
 
 gridW = 3
 gridH = 3
-canvasW = 300
+version = '1up'
 
 # ------------------------------------------------------------
 # Automatic dimensional variables
 
+canvasW = 78
+canvasH = (gridH / gridW) * canvasW
+if version == '9up':
+    canvasW = 84
+    lineThickness = ((84/66) * 2)
 canvasH = (gridH / gridW) * canvasW
 gridUnit = canvasW / gridW
+lineThickness = ((78/66) * 2)
 
 # ------------------------------------------------------------
 # Map the coordinates of all grid intersections
@@ -243,6 +249,10 @@ combosFinal.sort()
 print(str(len(combosFinal)) + ' final combos')
 # print(combosFinal)
 
+# ------------------------------------------------------------
+# Draw the final combinations (needs to be modified to work
+# with the new line combos setup)
+
 def drawCombo(drawing):
     for point in range(int(len(drawing) / 2)):
         lineStart = drawing[point * 2]
@@ -253,27 +263,38 @@ def drawCombo(drawing):
         y2 = lineEnd[1]
         line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
 
-# ------------------------------------------------------------
-# Draw the final combinations (needs to be modified to work
-# with the new line combos setup)
-
-for combo in combosFinal:
+for combo in combosFinal:    
     newPage(canvasW,canvasH)
-    # strokeWidth(gridUnit / 25)
-    # stroke(.90,.90,.90)
-    # for i in range(gridW + 1):
-    #     line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
-    # for i in range(gridH + 1):
-    #     line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
-    xy = [-canvasW,canvasH,0,canvasH,canvasW,canvasH,-canvasW,0,canvasW,-canvasW,canvasW,0,-canvasW,-canvasW,0,-canvasW,0,0]
-    for i in range(9):
+    if version == '9up':
+        # strokeWidth(gridUnit / 25)
+        # stroke(.90,.90,.90)
+        # for i in range(gridW + 1):
+        #     line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
+        # for i in range(gridH + 1):
+        #     line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
+        xy = [-canvasW,canvasH,0,canvasH,canvasW,canvasH,-canvasW,0,canvasW,-canvasW,canvasW,0,-canvasW,-canvasW,0,-canvasW,0,0]
+        for i in range(9):
+            with savedState():
+                scale(1/3, center=(canvasW / 2, canvasH / 2))
+                translate(xy[i*2],xy[i*2+1])
+                lineCap('round')
+                cmykStroke(0,0,0,0.3)
+                strokeWidth(lineThickness)
+                if i == 8:
+                    stroke(0)
+                drawCombo(combo)
+        import os
+        if not os.path.exists('Art/9up/'):
+            os.makedirs('Art/9up/')
+        saveImage('Art/9up/PE03-9up-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
+    else:
         with savedState():
-            scale(0.333333333333, center=(canvasW / 2, canvasH / 2))
-            translate(xy[i*2],xy[i*2+1])
+            scale(66/78, center=(canvasW / 2, canvasH / 2))
             lineCap('round')
-            stroke(0.75)
-            strokeWidth(gridUnit / 10)
-            if i == 8:
-                stroke(0)
+            cmykStroke(0,0,0,1)
+            strokeWidth(lineThickness)
             drawCombo(combo)
-# saveImage('PE03-draft1.pdf', multipage=True)
+        import os
+        if not os.path.exists('Art/1up/'):
+            os.makedirs('Art/1up/')
+        saveImage('Art/1up/PE03-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
