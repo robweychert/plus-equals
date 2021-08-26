@@ -3,19 +3,23 @@
 
 gridW = 3
 gridH = 3
-version = '1up'
+version = 'poster' # '1up' | '9up' | 'poster'
 
 # ------------------------------------------------------------
 # Automatic dimensional variables
 
 canvasW = 78
-canvasH = (gridH / gridW) * canvasW
+lineThickness = ((78/66) * 2)
 if version == '9up':
     canvasW = 84
     lineThickness = ((84/66) * 2)
+if version == 'poster':
+    canvasW = 66
+    lineThickness = 3
 canvasH = (gridH / gridW) * canvasW
 gridUnit = canvasW / gridW
-lineThickness = ((78/66) * 2)
+posterW = canvasW * 25
+posterH = canvasH * 17
 
 # ------------------------------------------------------------
 # Map the coordinates of all grid intersections
@@ -263,38 +267,82 @@ def drawCombo(drawing):
         y2 = lineEnd[1]
         line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
 
-for combo in combosFinal:    
-    newPage(canvasW,canvasH)
-    if version == '9up':
-        # strokeWidth(gridUnit / 25)
-        # stroke(.90,.90,.90)
-        # for i in range(gridW + 1):
-        #     line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
-        # for i in range(gridH + 1):
-        #     line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
-        xy = [-canvasW,canvasH,0,canvasH,canvasW,canvasH,-canvasW,0,canvasW,-canvasW,canvasW,0,-canvasW,-canvasW,0,-canvasW,0,0]
-        for i in range(9):
-            with savedState():
-                scale(1/3, center=(canvasW / 2, canvasH / 2))
-                translate(xy[i*2],xy[i*2+1])
-                lineCap('round')
-                cmykStroke(0,0,0,0.3)
-                strokeWidth(lineThickness)
-                if i == 8:
-                    stroke(0)
-                drawCombo(combo)
-        import os
-        if not os.path.exists('Art/9up/'):
-            os.makedirs('Art/9up/')
-        saveImage('Art/9up/PE03-9up-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
-    else:
+if version == 'poster':
+    newPage(posterW, posterH)
+    x = 0
+    y = 0
+    course = 'down'
+    for combo in combosFinal:
         with savedState():
-            scale(66/78, center=(canvasW / 2, canvasH / 2))
+            translate(x,y)
             lineCap('round')
             cmykStroke(0,0,0,1)
             strokeWidth(lineThickness)
             drawCombo(combo)
-        import os
-        if not os.path.exists('Art/1up/'):
-            os.makedirs('Art/1up/')
-        saveImage('Art/1up/PE03-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
+        for i in range(2):
+            if course == 'down':
+                if x == posterW - canvasW:
+                    y = y + canvasH
+                    course = 'up'
+                    break
+                elif y == 0:
+                    x = x + canvasW
+                    course = 'up'
+                    break
+                else:
+                    x = x + canvasW
+                    y = y - canvasH
+                    break
+            if course == 'up':
+                if y == posterH - canvasH:
+                    x = x + canvasW
+                    course = 'down'
+                    break
+                elif x == 0:
+                    y = y + canvasH
+                    course = 'down'
+                    break
+                else:
+                    x = x - canvasW
+                    y = y + canvasW
+                    break
+    import os
+    if not os.path.exists('Art/'):
+        os.makedirs('Art/')
+    saveImage('Art/PE03-poster.pdf', multipage=False)
+else:
+    for combo in combosFinal:
+        newPage(canvasW,canvasH)
+        if version == '9up':
+            # strokeWidth(gridUnit / 25)
+            # stroke(.90,.90,.90)
+            # for i in range(gridW + 1):
+            #     line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
+            # for i in range(gridH + 1):
+            #     line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
+            xy = [-canvasW,canvasH,0,canvasH,canvasW,canvasH,-canvasW,0,canvasW,-canvasW,canvasW,0,-canvasW,-canvasW,0,-canvasW,0,0]
+            for i in range(9):
+                with savedState():
+                    scale(1/3, center=(canvasW / 2, canvasH / 2))
+                    translate(xy[i*2],xy[i*2+1])
+                    lineCap('round')
+                    cmykStroke(0,0,0,0.3)
+                    strokeWidth(lineThickness)
+                    if i == 8:
+                        stroke(0)
+                    drawCombo(combo)
+            import os
+            if not os.path.exists('Art/9up/'):
+                os.makedirs('Art/9up/')
+            saveImage('Art/9up/PE03-9up-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
+        else:
+            with savedState():
+                scale(66/78, center=(canvasW / 2, canvasH / 2))
+                lineCap('round')
+                cmykStroke(0,0,0,1)
+                strokeWidth(lineThickness)
+                drawCombo(combo)
+            import os
+            if not os.path.exists('Art/1up/'):
+                os.makedirs('Art/1up/')
+            saveImage('Art/1up/PE03-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
