@@ -3,7 +3,7 @@
 
 gridW = 3
 gridH = 3
-version = '9up' # '1up' | '9up' | 'poster'
+version = '1up' # '1up' | '9up' | 'poster'
 
 # ------------------------------------------------------------
 # Automatic dimensional variables
@@ -334,7 +334,7 @@ else:
             import os
             if not os.path.exists('Art/9up/'):
                 os.makedirs('Art/9up/')
-            saveImage('Art/9up/PE03-9up-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
+            saveImage('Art/9up/PE03-9up-' + str(combosFinal.index(combo) + 1).zfill(3) + '.pdf', multipage=False)
         else:
             with savedState():
                 scale(48/60, center=(canvasW / 2, canvasH / 2))
@@ -345,4 +345,4 @@ else:
             import os
             if not os.path.exists('Art/1up/'):
                 os.makedirs('Art/1up/')
-            saveImage('Art/1up/PE03-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
+            saveImage('Art/1up/PE03-' + str(combosFinal.index(combo) + 1).zfill(3) + '.pdf', multipage=False)
