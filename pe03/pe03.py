@@ -3,19 +3,19 @@
 
 gridW = 3
 gridH = 3
-version = 'poster' # '1up' | '9up' | 'poster'
+version = '9up' # '1up' | '9up' | 'poster'
 
 # ------------------------------------------------------------
 # Automatic dimensional variables
 
-canvasW = 78
-lineThickness = ((78/66) * 2)
+canvasW = 60
+lineThickness = ((60/48) * 1.5)
 if version == '9up':
-    canvasW = 84
-    lineThickness = ((84/66) * 2)
+    canvasW = 67.2
+    lineThickness = ((67.2/48) * 1.5)
 if version == 'poster':
-    canvasW = 66
-    lineThickness = 3
+    canvasW = 48
+    lineThickness = 1.5
 canvasH = (gridH / gridW) * canvasW
 gridUnit = canvasW / gridW
 posterW = canvasW * 25
@@ -326,10 +326,10 @@ else:
                     scale(1/3, center=(canvasW / 2, canvasH / 2))
                     translate(xy[i*2],xy[i*2+1])
                     lineCap('round')
-                    cmykStroke(0,0,0,0.3)
+                    cmykStroke(0,0,0,0.333333)
                     strokeWidth(lineThickness)
                     if i == 8:
-                        stroke(0)
+                        cmykStroke(0,0,0,1)
                     drawCombo(combo)
             import os
             if not os.path.exists('Art/9up/'):
@@ -337,7 +337,7 @@ else:
             saveImage('Art/9up/PE03-9up-' + str(combosFinal.index(combo)).zfill(3) + '.pdf', multipage=False)
         else:
             with savedState():
-                scale(66/78, center=(canvasW / 2, canvasH / 2))
+                scale(48/60, center=(canvasW / 2, canvasH / 2))
                 lineCap('round')
                 cmykStroke(0,0,0,1)
                 strokeWidth(lineThickness)
