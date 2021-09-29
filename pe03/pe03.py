@@ -3,20 +3,23 @@
 
 gridW = 3
 gridH = 3
-version = '1up' # '1up' | '9up' | 'poster'
+version = 'svg' # '1up' | '9up' | 'poster' | 'svg'
 
 # ------------------------------------------------------------
 # Automatic dimensional variables
 
 canvasW = 60
 lineThickness = ((60/48) * 1.5)
+if version == 'svg':
+    canvasW = 96
+    lineThickness = 3
 if version == '9up':
     canvasW = 67.2
     lineThickness = ((67.2/48) * 1.5)
 if version == 'poster':
     canvasW = 48
     lineThickness = 1.5
-canvasH = (gridH / gridW) * canvasW
+canvasH = int((gridH / gridW) * canvasW)
 gridUnit = canvasW / gridW
 posterW = canvasW * 25
 posterH = canvasH * 17
@@ -113,7 +116,7 @@ for point1 in points:
             currentLine = []
 
 print(str(len(lines)) + ' diagonal lines')
-# print(lines)
+print(lines)
 
 # ------------------------------------------------------------
 # Sort the lines into two separate lists according to their
@@ -258,6 +261,9 @@ print(str(len(combosFinal)) + ' final combos')
 # with the new line combos setup)
 
 def drawCombo(drawing):
+    if version == 'svg':
+        # print('<svg width="' + str(canvasW) + '" height="' + str(canvasH) + '" viewbox="0 0 ' + str(canvasW) + ' ' + str(canvasH) + '">')
+        print('<g id="t' + str(combosFinal.index(combo) + 1).zfill(3) + '">')
     for point in range(int(len(drawing) / 2)):
         lineStart = drawing[point * 2]
         lineEnd = drawing[(point * 2) + 1]
@@ -265,9 +271,38 @@ def drawCombo(drawing):
         y1 = lineStart[1]
         x2 = lineEnd[0]
         y2 = lineEnd[1]
-        line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
+        if version == 'svg':
+            thisLine = [[x1, y1], [x2, y2]]
+            print('<use xlink:href="#l' + str(lines.index(thisLine) + 1).zfill(2) + '"></use>')
+        else:
+            line((x1 * gridUnit, y1 * gridUnit), (x2 * gridUnit, y2 * gridUnit))
+    if version == 'svg':
+        print('</g>')
 
-if version == 'poster':
+if version == 'svg':
+    print('<!-- Line sprites -->')
+    for i in range(len(lines)):
+        thisLine = lines[i]
+        point1 = thisLine[0]
+        point2 = thisLine[1]
+        print('<g id="l' + str(i + 1).zfill(2) + '"><line fill="none" stroke="#000" stroke-width="' + str(lineThickness) + '" stroke-linecap="round" x1="' + str(int(gridUnit * point1[0])) + '" y1="' + str(int(canvasH - (gridUnit * point1[1]))) + '" x2="' + str(int(gridUnit * point2[0])) + '" y2="' + str(int(canvasH - (gridUnit * point2[1]))) + '" /></g>')
+    print('<!-- Tile sprites -->')
+    for combo in combosFinal:
+        drawCombo(combo)
+    print('<!-- Gallery HTML -->')
+    for i in range(len(combosFinal)):
+        tileID = str(i + 1).zfill(3)
+        svgOpen = '<svg viewbox="0 0 ' + str(canvasW) + ' ' + str(canvasH) + '">'
+        def thisTile(transformX, transformY, gray):
+            opacity = ''
+            if gray == 1:
+                opacity = ' opacity="0.333"'
+            if transformX == 0 and transformY == 0 and gray == 0:
+                return '<use xlink:href="#t' + tileID + '"' + opacity + '></use>'
+            else:
+                return '<use xlink:href="#t' + tileID + '"' + opacity + ' transform="translate(' + str(int(transformX * gridUnit)) + ' ' + str(int(transformY * gridUnit)) + ') scale(0.333)"></use>'
+        print('<figure class="gallery__item" id="pe03-' + tileID + '">' + svgOpen + thisTile(0,0,0) + '</svg>' + svgOpen + thisTile(0,0,1) + thisTile(1,0,1) + thisTile(2,0,1) + thisTile(0,1,1) + thisTile(1,1,0) + thisTile(2,1,1) + thisTile(0,2,1) + thisTile(1,2,1) + thisTile(2,2,1) + '</svg><figcaption class="gallery__caption">PE03-' + tileID + '</figcaption></figure>')
+elif version == 'poster':
     newPage(posterW, posterH)
     x = 0
     y = 0
