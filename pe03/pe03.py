@@ -1,9 +1,16 @@
+# Read Plus Equals #3 (https://plusequals.art/03) for the
+# backstory on this script. Run the script in DrawBot
+# (https://drawbot.com) to generate all 425 images shown in
+# Plus Equals #3.
+
 # ------------------------------------------------------------
-# Settings (deviating from a 3x3 grid is currently buggy)
+# Settings (I may eventually modify this script to work with
+# different grid settings, but for now it only works with a
+# 3x3 grid)
 
 gridW = 3
 gridH = 3
-version = 'svg' # '1up' | '9up' | 'poster' | 'svg'
+version = 'poster' # '1up' | '9up' | 'poster' | 'svg'
 
 # ------------------------------------------------------------
 # Automatic dimensional variables
@@ -17,8 +24,8 @@ if version == '9up':
     canvasW = 67.2
     lineThickness = ((67.2/48) * 1.5)
 if version == 'poster':
-    canvasW = 48
-    lineThickness = 1.5
+    canvasW = 96
+    lineThickness = 3
 canvasH = int((gridH / gridW) * canvasW)
 gridUnit = canvasW / gridW
 posterW = canvasW * 25
@@ -38,7 +45,6 @@ for x in range(gridW + 1):
         currentIntersection = []
 
 print(str(len(intersections)) + ' intersections')
-# print(intersections)
 
 # ------------------------------------------------------------
 # Identify the intersections on the perimeter of the grid and
@@ -51,9 +57,7 @@ for intersection in intersections:
     if ((intersections.index(intersection) < gridW + 1) or (intersections.index(intersection) > (len(intersections) - (gridW + 1)))) or ((intersection[1] == 0) or (intersection[1] == gridW)):
         points.append(intersection)
 
-# print('pointAmount: ' + str(pointAmount))
 print(str(len(points)) + ' points')
-# print(points)
 
 # ------------------------------------------------------------
 # Put the points in lists of rows
@@ -85,7 +89,6 @@ for i in range(gridW + 1):
     currentCol = []
 
 print(str(len(cols)) + ' columns')
-# print(cols)
 
 # ------------------------------------------------------------
 # Using the row and column lists, make a list of all unique
@@ -150,9 +153,7 @@ for line1 in lines:
         linesAdditional.append(line1)
 
 print(str(lines1stColTotal) + ' first-column lines in ' + str(len(lines1stCol)) + ' sublists')
-# print(lines1stCol)
 print(str(len(linesAdditional)) + ' additional lines')
-# print(linesAdditional)
 
 # ------------------------------------------------------------
 # Find all possible unique line combinations of one line from
@@ -184,7 +185,6 @@ combos1stCol = combos1stCol[-1]
 combos1stCol.sort()
 
 print(str(len(combos1stCol)) + ' first-column combos')
-# print(combos1stCol)
 
 # ------------------------------------------------------------
 # Find all possible unique combinations of lines from the list
@@ -229,7 +229,6 @@ else:
     combosAdditional = linesAdditional
 
 print(str(len(combosAdditional)) + ' additional combos')
-# print(combosAdditional)
 
 # ------------------------------------------------------------
 # Find all possible unique combinations of first-column combos
@@ -254,15 +253,12 @@ for combo1stCol in combos1stCol:
 combosFinal.sort()
 
 print(str(len(combosFinal)) + ' final combos')
-# print(combosFinal)
 
 # ------------------------------------------------------------
-# Draw the final combinations (needs to be modified to work
-# with the new line combos setup)
+# Draw the final combinations
 
 def drawCombo(drawing):
     if version == 'svg':
-        # print('<svg width="' + str(canvasW) + '" height="' + str(canvasH) + '" viewbox="0 0 ' + str(canvasW) + ' ' + str(canvasH) + '">')
         print('<g id="t' + str(combosFinal.index(combo) + 1).zfill(3) + '">')
     for point in range(int(len(drawing) / 2)):
         lineStart = drawing[point * 2]
@@ -303,6 +299,7 @@ if version == 'svg':
                 return '<use xlink:href="#t' + tileID + '"' + opacity + ' transform="translate(' + str(int(transformX * gridUnit)) + ' ' + str(int(transformY * gridUnit)) + ') scale(0.333)"></use>'
         print('<figure class="gallery__item" id="pe03-' + tileID + '">' + svgOpen + thisTile(0,0,0) + '</svg>' + svgOpen + thisTile(0,0,1) + thisTile(1,0,1) + thisTile(2,0,1) + thisTile(0,1,1) + thisTile(1,1,0) + thisTile(2,1,1) + thisTile(0,2,1) + thisTile(1,2,1) + thisTile(2,2,1) + '</svg><figcaption class="gallery__caption">PE03-' + tileID + '</figcaption></figure>')
 elif version == 'poster':
+    print('<svg viewbox="0 0 ' + str(posterW) + ' ' + str(posterH) + '">')
     newPage(posterW, posterH)
     x = 0
     y = 0
@@ -314,6 +311,7 @@ elif version == 'poster':
             cmykStroke(0,0,0,1)
             strokeWidth(lineThickness)
             drawCombo(combo)
+            print('<use xlink:href="#t' + str(int(combosFinal.index(combo) + 1)).zfill(3) + '" transform="translate(' + str(x) + ' ' + str(posterH - y - canvasH) + ')"></use>')
         for i in range(2):
             if course == 'down':
                 if x == posterW - canvasW:
@@ -345,16 +343,11 @@ elif version == 'poster':
     if not os.path.exists('Art/'):
         os.makedirs('Art/')
     saveImage('Art/PE03-poster.pdf', multipage=False)
+    print('</svg>')
 else:
     for combo in combosFinal:
         newPage(canvasW,canvasH)
         if version == '9up':
-            # strokeWidth(gridUnit / 25)
-            # stroke(.90,.90,.90)
-            # for i in range(gridW + 1):
-            #     line((gridUnit * i, 0),(gridUnit * i, gridW * gridUnit))
-            # for i in range(gridH + 1):
-            #     line((0, gridUnit * i),(gridH * gridUnit, gridUnit * i))
             xy = [-canvasW,canvasH,0,canvasH,canvasW,canvasH,-canvasW,0,canvasW,-canvasW,canvasW,0,-canvasW,-canvasW,0,-canvasW,0,0]
             for i in range(9):
                 with savedState():
