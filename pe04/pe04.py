@@ -1,3 +1,8 @@
+# Read Plus Equals #4 (https://plusequals.art/04) for the
+# backstory on this script. Run the script in DrawBot
+# (https://drawbot.com) to generate all 252 images shown in
+# Plus Equals #4.
+
 #--------------------------------------------------
 # Settings
 #--------------------------------------------------
@@ -136,6 +141,12 @@ def drawBlock(x,y,z,w,d,h,compound=False):
 #--------------------------------------------------
 # Parts
 #--------------------------------------------------
+# The first set of numbers (in parentheses) defines
+# the part's dimensions and coordinates for use
+# with the drawBlock() function. The second set of
+# numbers (in brackets) defines the numbered units
+# of space the part occupies in the area where the
+# parts will be arranged.
 
 parts = [
     [ # 1x3
@@ -243,7 +254,7 @@ for i in range(len(parts)):
                         currentCombo = combo.copy()
 
 print('combos: ' + str(len(combos[-1])))
-
+                
 #--------------------------------------------------
 # Find all possible stacking orders for each combo
 #--------------------------------------------------
